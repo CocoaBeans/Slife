@@ -60,94 +60,94 @@ const int MAX_SECS = 3600;
 // **********************************************************************
 //								init
 // **********************************************************************
-- (id) init
+- (id)init
 {
-	[super init];
-	
-	// Init members
-	m_lastApplication = nil;
-	m_lastWebPage = nil;
-	m_lastStartDate = nil;
-	m_managedContext = [[NSApp delegate] managedObjectContext];
-	
-	// No logged goals yet
-	m_hasLoggedGoals = FALSE;
-	
-	// Get the defaults
-    m_userDefaults = [NSUserDefaults standardUserDefaults];
-	
-	// Debug
-	m_debugState = [[m_userDefaults objectForKey: k_Pref_DebugOn_Key] boolValue];
-	
-	// ------------------------ Load Scripts ---------------------
-	
-	// Load the script object
-	NSDictionary* errorDict = nil;
-	NSString* theScriptPath = nil;
-	NSURL* theScriptPathURL = nil;
-	
-	NSString* theBundlePath = [[NSBundle mainBundle] resourcePath];
-	
-	// Mail
-	theScriptPath = [theBundlePath stringByAppendingPathComponent: @"mail.scpt"];
-	theScriptPathURL = [NSURL fileURLWithPath: theScriptPath];
-	m_mailScript = [[NSAppleScript alloc] initWithContentsOfURL: theScriptPathURL error: &errorDict];
-	
-	// NetNewsWire
-	theScriptPath = [theBundlePath stringByAppendingPathComponent: @"netnewswire.scpt"];
-	theScriptPathURL = [NSURL fileURLWithPath: theScriptPath];
-	m_netnewswireScript = [[NSAppleScript alloc] initWithContentsOfURL: theScriptPathURL error: &errorDict];
-	
-	// Safari
-	theScriptPath = [theBundlePath stringByAppendingPathComponent: @"safari.scpt"];
-	theScriptPathURL = [NSURL fileURLWithPath: theScriptPath];
-	m_safariScript = [[NSAppleScript alloc] initWithContentsOfURL: theScriptPathURL error: &errorDict];
-	
-	// Firefox
-	theScriptPath = [theBundlePath stringByAppendingPathComponent: @"firefox.scpt"];
-	theScriptPathURL = [NSURL fileURLWithPath: theScriptPath];
-	m_firefoxScript = [[NSAppleScript alloc] initWithContentsOfURL: theScriptPathURL error: &errorDict];
-	
-	// Opera
-	theScriptPath = [theBundlePath stringByAppendingPathComponent: @"opera.scpt"];
-	theScriptPathURL = [NSURL fileURLWithPath: theScriptPath];
-	m_operaScript = [[NSAppleScript alloc] initWithContentsOfURL: theScriptPathURL error: &errorDict];
-	
-	// Chrome
-	theScriptPath = [theBundlePath stringByAppendingPathComponent: @"chrome.scpt"];
-	theScriptPathURL = [NSURL fileURLWithPath: theScriptPath];
-	m_chromeScript = [[NSAppleScript alloc] initWithContentsOfURL: theScriptPathURL error: &errorDict];
-	
-	// Init the idleness detector variables
-	m_systemIdle = FALSE;
-	m_lastRecordedMousePosition.x = 0;
-	m_lastRecordedMousePosition.y = 0;
-	m_timeLastRecordedMousePosition = [[NSCalendarDate date] retain];
-	
-	// Apps to ignore
-	m_appsToIgnore = [NSSet setWithObjects: @"SystemUIServer", @"SecurityAgent", @"ScreenSaverEngine", 
-		@"loginwindow", @"CoreServicesUIAgent", @"UserNotificationCenter", nil];
-	
-	// Get the system-wide UI accessibility element
-	m_uiSystemWideElement = AXUIElementCreateSystemWide();	
-	
-	// Observation Timer
-	m_observationTimer = [NSTimer scheduledTimerWithTimeInterval: [[m_userDefaults objectForKey: k_Pref_ObservationRate_Key] intValue]
-		target: self selector: @selector(observationHandler:) userInfo: nil
-		repeats: YES];
-	
-	// Notify when going to sleep and wake up
-	NSNotificationCenter* notCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
-	[notCenter addObserver:self selector: @selector(goingToSleepNotification:) name: NSWorkspaceWillSleepNotification object:nil];
-	[notCenter addObserver:self selector: @selector(wakingUpNotification:) name: NSWorkspaceDidWakeNotification object:nil];
-		   
-	// Observer is active
-	m_observerActive = TRUE;
-	
-	// Private mode is off
-	m_privateModeOn = FALSE;
-	
-	return self;
+    if ((self = [super init]))
+    {
+        // Init members
+        m_lastApplication = nil;
+        m_lastWebPage = nil;
+        m_lastStartDate = nil;
+        m_managedContext = [[NSApp delegate] managedObjectContext];
+        
+        // No logged goals yet
+        m_hasLoggedGoals = FALSE;
+        
+        // Get the defaults
+        m_userDefaults = [NSUserDefaults standardUserDefaults];
+        
+        // Debug
+        m_debugState = [[m_userDefaults objectForKey: k_Pref_DebugOn_Key] boolValue];
+        
+        // ------------------------ Load Scripts ---------------------
+        
+        // Load the script object
+        NSDictionary* errorDict = nil;
+        NSString* theScriptPath = nil;
+        NSURL* theScriptPathURL = nil;
+        
+        NSString* theBundlePath = [[NSBundle mainBundle] resourcePath];
+        
+        // Mail
+        theScriptPath = [theBundlePath stringByAppendingPathComponent: @"mail.scpt"];
+        theScriptPathURL = [NSURL fileURLWithPath: theScriptPath];
+        m_mailScript = [[NSAppleScript alloc] initWithContentsOfURL: theScriptPathURL error: &errorDict];
+        
+        // NetNewsWire
+        theScriptPath = [theBundlePath stringByAppendingPathComponent: @"netnewswire.scpt"];
+        theScriptPathURL = [NSURL fileURLWithPath: theScriptPath];
+        m_netnewswireScript = [[NSAppleScript alloc] initWithContentsOfURL: theScriptPathURL error: &errorDict];
+        
+        // Safari
+        theScriptPath = [theBundlePath stringByAppendingPathComponent: @"safari.scpt"];
+        theScriptPathURL = [NSURL fileURLWithPath: theScriptPath];
+        m_safariScript = [[NSAppleScript alloc] initWithContentsOfURL: theScriptPathURL error: &errorDict];
+        
+        // Firefox
+        theScriptPath = [theBundlePath stringByAppendingPathComponent: @"firefox.scpt"];
+        theScriptPathURL = [NSURL fileURLWithPath: theScriptPath];
+        m_firefoxScript = [[NSAppleScript alloc] initWithContentsOfURL: theScriptPathURL error: &errorDict];
+        
+        // Opera
+        theScriptPath = [theBundlePath stringByAppendingPathComponent: @"opera.scpt"];
+        theScriptPathURL = [NSURL fileURLWithPath: theScriptPath];
+        m_operaScript = [[NSAppleScript alloc] initWithContentsOfURL: theScriptPathURL error: &errorDict];
+        
+        // Chrome
+        theScriptPath = [theBundlePath stringByAppendingPathComponent: @"chrome.scpt"];
+        theScriptPathURL = [NSURL fileURLWithPath: theScriptPath];
+        m_chromeScript = [[NSAppleScript alloc] initWithContentsOfURL: theScriptPathURL error: &errorDict];
+        
+        // Init the idleness detector variables
+        m_systemIdle = FALSE;
+        m_lastRecordedMousePosition.x = 0;
+        m_lastRecordedMousePosition.y = 0;
+        m_timeLastRecordedMousePosition = [[NSCalendarDate date] retain];
+        
+        // Apps to ignore
+        m_appsToIgnore = [NSSet setWithObjects: @"SystemUIServer", @"SecurityAgent", @"ScreenSaverEngine",
+                          @"loginwindow", @"CoreServicesUIAgent", @"UserNotificationCenter", nil];
+        
+        // Get the system-wide UI accessibility element
+        m_uiSystemWideElement = AXUIElementCreateSystemWide();
+        
+        // Observation Timer
+        m_observationTimer = [NSTimer scheduledTimerWithTimeInterval: [[m_userDefaults objectForKey: k_Pref_ObservationRate_Key] intValue]
+                                                              target: self selector: @selector(observationHandler:) userInfo: nil
+                                                             repeats: YES];
+        
+        // Notify when going to sleep and wake up
+        NSNotificationCenter* notCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
+        [notCenter addObserver:self selector: @selector(goingToSleepNotification:) name: NSWorkspaceWillSleepNotification object:nil];
+        [notCenter addObserver:self selector: @selector(wakingUpNotification:) name: NSWorkspaceDidWakeNotification object:nil];
+        
+        // Observer is active
+        m_observerActive = TRUE;
+        
+        // Private mode is off
+        m_privateModeOn = FALSE;
+    }
+    return self;
 }
 
 #pragma mark --- Accessors ---

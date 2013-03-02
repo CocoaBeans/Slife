@@ -92,25 +92,26 @@ extern NSString* k_Pref_EventPurge_OneDay;
 // **********************************************************************
 //							awakeFromNib
 // **********************************************************************
-- (id) init
+- (id)init
 {
-	// Init the parent class
-    [super init];
-		
-	// Get the defaults
-    m_userDefaults = [NSUserDefaults standardUserDefaults];
-	
-	// Check if first time running
-	if([self isFirstTimeRunning])
-		m_firstRun = TRUE;
-	else
-		m_firstRun = FALSE;
-	
-	// No info window yet
-	m_infoWindowController = nil;
-	
-	return self;
+    self = [super init];
+    if (self)
+    {
+        // Get the defaults
+        m_userDefaults = [NSUserDefaults standardUserDefaults];
+        
+        // Check if first time running
+        if([self isFirstTimeRunning])
+            m_firstRun = TRUE;
+        else
+            m_firstRun = FALSE;
+        
+        // No info window yet
+        m_infoWindowController = nil;
+    }
+    return self;
 }
+
 
 // **********************************************************************
 //							awakeFromNib
