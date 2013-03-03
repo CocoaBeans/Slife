@@ -392,10 +392,10 @@ const int MAX_SECS = 3600;
         if ( [attrNames indexOfObject:(NSString *)attribute] != NSNotFound &&
         	AXUIElementCopyAttributeValue(element, attribute, (CFTypeRef *)&result) == kAXErrorSuccess) 
 		{
-            [result autorelease];
+            CFMakeCollectable(result);
         }
 		
-        [attrNames release];
+        CFRelease(attrNames);
     }
 	
     return result;
@@ -437,7 +437,7 @@ const int MAX_SECS = 3600;
 					}
 				}
 				
-                [uiElementRole release];
+                CFRelease(uiElementRole);
             }
 			
 			if (AXUIElementCopyAttributeValue( (AXUIElementRef)theValue, kAXDocumentAttribute, (CFTypeRef *)&uiElementRole ) == kAXErrorSuccess) 
@@ -450,7 +450,7 @@ const int MAX_SECS = 3600;
 				else
 					m_uiWindowFilePath = nil;
 				
-                [uiElementRole release];
+                CFRelease(uiElementRole);
             }
 		}
     }
@@ -1174,6 +1174,7 @@ const int MAX_SECS = 3600;
 	if (AXUIElementCopyElementAtPosition( m_uiSystemWideElement, pointAsCGPoint.x, pointAsCGPoint.y, &newElement ) == kAXErrorSuccess && newElement)
 	{
 		[self lineageOfUIElement:newElement];
+        CFRelease(newElement);
 	}
 		
 	//NSLog(m_uiApplicationName);
